@@ -1,0 +1,127 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    .nav-tabs {
+        display: flex;
+        list-style-type: none;
+        padding: 0;
+        border-radius: 2px;
+    }
+    .nav-tabs a {
+        cursor: pointer;
+        padding: 1rem 2rem;
+        background-color: salmon;
+    }
+    .tab-content .tab-pane {
+        display: none;
+        padding: 1rem 0;
+    }
+</style>
+<body>
+
+    <div id="myTabs">
+        <nav>
+            <div class="nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item" id="nav-home-tab" role="tab" data-content="nav-home" data-selected=true>Home</a>
+                    <a class="nav-item" id="nav-profile-tab" role="tab" data-content="nav-profile" data-selected=false>Profile</a>
+                    <a class="nav-item" id="nav-contact-tab" role="tab" data-content="nav-contact" data-selected=false>Contact</a>
+                </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade" id="nav-home">Home Tab</div>
+            <div class="tab-pane fade" id="nav-profile">Profile Tab</div>
+            <div class="tab-pane fade" id="nav-contact">Contact Tab</div>
+        </div>
+    </div>
+
+    <div id="myNewTabs">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" role="tab" data-content="nav-one" data-selected=true>Home</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" role="tab" data-content="nav-two" data-selected=false>Profile</a>
+                <a class="nav-item nav-link" id="nav-contact-tab" role="tab" data-content="nav-three" data-selected=false>Contact</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade" id="nav-one">Home Tab</div>
+            <div class="tab-pane fade" id="nav-two">Profile Tab</div>
+            <div class="tab-pane fade" id="nav-three">Contact Tab</div>
+        </div>
+    </div>
+    <script>
+
+        class Tab {
+            constructor(head, body) {
+                this.head = head;
+                this.body = body;
+            }
+
+            show() {
+                this.body.style.display = "block";
+            }
+            hide() {
+                this.body.style.display = "none";
+            }
+        }
+        class TabList {
+            
+            constructor(id, opts = {}){
+                
+                if (!id) {
+                    throw new Error("Tab Id not defined");
+                }
+
+                const defaultTabOpts = {
+                    action: "click"
+                };
+                
+                Object.assign(defaultTabOpts, opts);
+
+                this.id = id;
+                this.opts = defaultTabOpts;
+                this.tabList = [];
+                
+                this.initTabs();
+                this.addListener();
+            }
+
+            initTabs() {
+                let tabHeads = document.querySelectorAll(`#${this.id} [role="tab"]`);
+                for(let i = 0; i<tabHeads.length; i++){
+                    var tabHead = tabHeads[i];
+                    var tabBody = document.querySelector(`#${this.id} #${tabHead.dataset.content}`);
+                    var tab = new Tab(tabHead, tabBody);
+                    this.tabList.push(tab);
+                    if(tabHead.dataset.selected == "true"){
+                        tab.show();
+                    }
+                };
+            }
+
+            addListener(){
+                let _tabList = this.tabList;
+                let tabHeadContainer = document.querySelector(`#${this.id} [role="tablist"]`);
+                
+                tabHeadContainer.addEventListener(this.opts.action, function (e) {
+                    _tabList.forEach(function (tab, id) {
+                        if (e.target.id == tab.head.id) {
+                            tab.show();
+                        }
+                        else {
+                            tab.hide();
+                        }
+                    });
+                });
+            }
+        }
+
+        new TabList("myTabs");
+        new TabList("myNewTabs", { action: "mouseover" });
+    </script>
+</body>
+</html>
